@@ -6,13 +6,13 @@
 /*   By: mabi-nak <mabi-nak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 12:01:39 by mabi-nak          #+#    #+#             */
-/*   Updated: 2025/01/05 05:05:00 by mabi-nak         ###   ########.fr       */
+/*   Updated: 2025/01/07 11:03:07 by mabi-nak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-void	process1(char **argv, char **env, int pipefd[2])
+void	process1(char *argv[], char **env, int pipefd[2])
 {
 	int	fd;
 
