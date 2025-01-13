@@ -6,7 +6,7 @@
 /*   By: mabi-nak <mabi-nak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 13:32:57 by mabi-nak          #+#    #+#             */
-/*   Updated: 2025/01/05 07:47:49 by mabi-nak         ###   ########.fr       */
+/*   Updated: 2025/01/13 10:43:18 by mabi-nak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,27 +50,42 @@ char	**split_the_paths(char **env, char *start)
 	return (paths);
 }
 
-char	*find_the_path(char **env, char *cmd)
+char	*find_in_paths(char **paths, char *cmd)
 {
-	char	**paths;
+	char	*tmp_path;
 	char	*path;
-	char	*shortpath;
 	int		i;
 
 	i = 0;
 	while (paths[i])
 	{
-		shortpath = ft_strjoin(paths[i], "/");
-		path = ft_strjoin(shortpath, cmd);
-		free(shortpath);
+		tmp_path = ft_strjoin(paths[i], "/");
+		path = ft_strjoin(tmp_path, cmd);
+		free(tmp_path);
 		if (access(path, F_OK) == 0)
-		{
-			free_paths(paths);
 			return (path);
-		}
 		free(path);
 		i++;
 	}
+	return (NULL);
+}
+
+char	*find_the_path(char **env, char *cmd)
+{
+	char	**paths;
+	char	*path;
+	char	*tmp_path;
+	int		i;
+
+	i = 0;
+	while (env[i] && ft_strnstr(env[i], "PATH=", 5) == 0)
+		i++;
+	if (!env[i])
+		return (NULL);
+	paths = ft_split(env[i] + 5, ':');
+	if (!paths)
+		return (NULL);
+	path = find_in_paths(paths, cmd);
 	free_paths(paths);
 	return (NULL);
 }

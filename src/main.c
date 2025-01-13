@@ -6,11 +6,27 @@
 /*   By: mabi-nak <mabi-nak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 12:01:39 by mabi-nak          #+#    #+#             */
-/*   Updated: 2025/01/07 11:03:07 by mabi-nak         ###   ########.fr       */
+/*   Updated: 2025/01/13 10:45:59 by mabi-nak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
+
+void	parse_cmd(char *argv, char **env)
+{
+	char	**cmd;
+	char	*path;
+
+	cmd = ft_split (argv, ' ');
+	path = find_the_path(env, cmd[0]);
+	if (!path)
+	{
+		free_paths(cmd);
+		error_msg("Error, Couldn't find path\n");
+	}
+	if (execve(path, cmd, env) == -1)
+		error_msg("execve failed\n");
+}
 
 void	process1(char *argv[], char **env, int pipefd[2])
 {
@@ -46,26 +62,34 @@ void	process2(char **argv, char **env, int pipefd[2])
 	parse_cmd(argv[3], env);
 }
 
-void	parse_cmd(char *argv, char **env)
+int	pipex(char **argv, char **env)
 {
-	char	**cmd;
-	char	*path;
+	pid_t	pid1;
+	pid_t	pid2;
+	int		pipefd[2];
+	int		stat;
 
-	cmd = ft_split (argv, ' ');
-	path = find_the_path(cmd[0], env);
-	if (!path)
-	{
-		free_paths(cmd);
-		error_msg("Error, Couldn't find path\n");
-	}
-	if (execve(path, cmd, env) == -1)
-		error_msg("execve failed\n");
+	if (pipe(pipefd) == -1)
+		error_msg("the pipe failed.");
+	pid1 = fork();
+	if (pid1 == 0)
+		process1(argv, env, pipefd);
+	pid2 = fork();
+	if (pid2 == 0)
+		process2(argv, env, pipefd);
+	close(pipefd[0]);
+	close(pipefd[1]);
+	waitpid(pid1, &stat, 0);
+	waitpid(pid2, &stat, 0);
+	return (stat);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
+	int	the_outcome;
+
 	if (argc != 5)
 		error_msg("Error\n");
-
+	the_outcome = pipex(argv, envp);
 	return (0);
 }
