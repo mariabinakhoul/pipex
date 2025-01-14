@@ -6,7 +6,7 @@
 /*   By: mabi-nak <mabi-nak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 11:53:51 by mabi-nak          #+#    #+#             */
-/*   Updated: 2025/01/05 06:09:30 by mabi-nak         ###   ########.fr       */
+/*   Updated: 2025/01/13 11:11:43 by mabi-nak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_list
 	struct s_list	*next;
 	int				index;
 }					t_list;
+
 int				ft_atoi(const char *str);
 char			*ft_itoa(int n);
 int				ft_isdigit(int c);
@@ -58,4 +59,5 @@ void			*ft_calloc(size_t nmemb, size_t size);
 void			ft_bzero(void *s, size_t n);
 char			*ft_strnstr(const char *haystack, const char *needle, size_t n);
 char			*ft_substr(char const *s, unsigned int start, size_t len);
+int				ft_strncmp(const char *s1, const char *s2, size_t n);
 #endif

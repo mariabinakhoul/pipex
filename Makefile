@@ -6,6 +6,8 @@ OBJS = ${SRCS:.c=.o}
 
 NAME = pipex
 
+HEADER = ./includes/
+
 LIBFT = libft/libft.a
 
 COM_COLOR   = \033[0;34m
@@ -16,7 +18,7 @@ NO_COLOR    = \033[m
 
 CC = cc
 
-C_FLAGS = -Wall -Wextra -Werror -g -I
+C_FLAGS = -Wall -Wextra -Werror -g -I ${HEADER}
 
 RM = rm -f
 
@@ -32,10 +34,10 @@ $(NAME) : 	${LIBFT} ${OBJS}
 			@printf "%-53b%b" "$(COM_COLOR)LIBFT Compiled:" "$(OK_COLOR)[✓]$(NO_COLOR)\n"
 
 $(LIBFT) :
-		  @make -C ./Libft
+		  @make -C ./libft
 
 clean :	
-		@make clean -C ./Libft
+		@make clean -C ./libft
 		${RM} ${OBJS}
 		@printf "%-53b%b" "$(COM_COLOR)OBJECT FILES DELETED:" "$(ERROR_COLOR)[✓]$(NO_COLOR)\n"
 

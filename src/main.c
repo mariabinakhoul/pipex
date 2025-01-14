@@ -6,7 +6,7 @@
 /*   By: mabi-nak <mabi-nak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 12:01:39 by mabi-nak          #+#    #+#             */
-/*   Updated: 2025/01/13 10:45:59 by mabi-nak         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:03:47 by mabi-nak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,22 @@ void	parse_cmd(char *argv, char **env)
 	char	*path;
 
 	cmd = ft_split (argv, ' ');
+	if (!cmd)
+		error_msg("Memory allocation failed for cmd\n");
 	path = find_the_path(env, cmd[0]);
-	if (!path)
+	if (path)
 	{
-		free_paths(cmd);
-		error_msg("Error, Couldn't find path\n");
+		execve(path, cmd, env);
 	}
-	if (execve(path, cmd, env) == -1)
-		error_msg("execve failed\n");
+	free_paths(cmd);
+	free(path);
 }
 
 void	process1(char *argv[], char **env, int pipefd[2])
 {
 	int	fd;
 
-	fd = open(argv[1], 0);
+	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
 		error_msg("Error opening infile\n");
 	else if (dup2(fd, STDIN_FILENO) == -1)
@@ -49,7 +50,7 @@ void	process2(char **argv, char **env, int pipefd[2])
 {
 	int	fd;
 
-	fd = open(argv[4], 1);
+	fd = open(argv[4], O_WRONLY | O_CREAT);
 	if (fd == -1)
 		error_msg("Error opening outfile\n");
 	else if (dup2(pipefd[0], STDIN_FILENO) == -1)
@@ -91,5 +92,5 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 5)
 		error_msg("Error\n");
 	the_outcome = pipex(argv, envp);
-	return (0);
+	return (the_outcome);
 }
